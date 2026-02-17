@@ -2,76 +2,84 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <title>Goose Soft Admin Panel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goose Soft | Key Generator</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body { background: #050505; color: #00FF00; font-family: 'Courier New', monospace; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .panel { border: 2px solid #00FF00; padding: 30px; background: #0a0a0a; box-shadow: 0 0 20px #00FF00; text-align: center; width: 400px; }
-        h1 { font-size: 24px; margin-bottom: 20px; text-shadow: 0 0 10px #00FF00; }
-        select, button { width: 100%; padding: 10px; margin: 10px 0; background: black; color: #00FF00; border: 1px solid #00FF00; cursor: pointer; font-family: inherit; }
-        button:hover { background: #00FF00; color: black; font-weight: bold; }
-        #result { margin-top: 20px; padding: 10px; border: 1px dashed #00FFFF; color: #00FFFF; display: none; word-break: break-all; }
+        .panel { border: 2px solid #00FF00; padding: 30px; background: #0a0a0a; box-shadow: 0 0 20px #00FF00; text-align: center; width: 350px; border-radius: 10px; }
+        h1 { font-size: 22px; margin-bottom: 20px; text-shadow: 0 0 10px #00FF00; letter-spacing: 2px; }
+        select, button { width: 100%; padding: 12px; margin: 10px 0; background: black; color: #00FF00; border: 1px solid #00FF00; cursor: pointer; font-family: inherit; font-size: 14px; outline: none; }
+        button:hover { background: #00FF00; color: black; font-weight: bold; box-shadow: 0 0 10px #00FF00; }
+        #result { margin-top: 20px; padding: 10px; border: 1px dashed #00FFFF; color: #00FFFF; display: none; word-break: break-all; font-weight: bold; }
+        .status { font-size: 10px; color: #555; margin-top: 10px; }
     </style>
 </head>
 <body>
+
     <div class="panel">
         <h1>⚔ GOOSE KEYGEN ⚔</h1>
-        <label>Оберіть термін:</label>
+        
+        <label for="duration">ТЕРМІН ПІДПИСКИ:</label>
         <select id="duration">
             <option value="1h">1 Година</option>
             <option value="1d">1 День</option>
-            <option value="1m">1 Місяць</option>
-            <option value="lifetime">Назавжди (Lifetime)</option>
+            <option value="30d">30 Днів</option>
+            <option value="lifetime">LIFETIME (Назавжди)</option>
         </select>
-        <button onclick="generateKey()">ЗГЕНЕРУВАТИ ЛІЦЕНЗІЮ</button>
+
+        <button id="genBtn">ЗГЕНЕРУВАТИ КЛЮЧ</button>
+
         <div id="result"></div>
+        <div class="status">Connected to Supabase V2</div>
     </div>
 
     <script>
-        const SUPABASE_URL = 'ТВІЙ_URL_ПРОЕКТУ';
-        const SUPABASE_KEY = 'ТВІЙ_ANON_KEY';
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-        async function generateKey() {
-            const duration = document.getElementById('duration').value;
-            // Генеримо ключ формату GOOSE-XXXX-XXXX
-            const randomPart = () => Math.random().toString(36).substring(2, 6).toUpperCase();
-            const newKey = `GOOSE-${randomPart()}-${randomPart()}`;
-
-            const { data, error } = await supabase
-                .from('license_keys')
-                .insert([{ 
-                    key: newKey, 
-                    type: duration, 
-                    is_used: false 
-                }]);
-
-            const resultDiv = document.getElementById('result');
-            if (error) {
-                resultDiv.style.display = 'block';
-                resultDiv.style.color = 'red';
-                resultDiv.innerText = "Помилка: " + error.message;
-            } else {
-                resultDiv.style.display = 'block';
-                resultDiv.style.color = '#00FFFF';
-                resultDiv.innerText = "КЛЮЧ СТВОРЕНО: " + newKey;
-            }
-        }
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <script>
+        // --- ВСТАВ СВОЇ ДАНІ СЮДИ ---
         const SUPABASE_URL = 'https://dxyiwfugfsclpufioeds.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR4eWl3ZnVnZnNjbHB1ZmlvZWRzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzNDE2NjgsImV4cCI6MjA4NjkxNzY2OH0.EYETRqZggLbB8N2zjcOnkydlx9F8QyAB-Zi8oKycMCI';
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const ADMIN_PASSWORD = '1234'; // Твій пароль для створення ключів
+        // ---------------------------
 
-        async function generateKey() {
-            // Тут твій код функції, який я давав раніше
-            console.log("Кнопка натиснута!");
-            // ... решта логіку ...
-        }
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // Використовуємо addEventListener замість onclick в HTML, щоб уникнути ReferenceError
+        document.getElementById('genBtn').addEventListener('click', async () => {
+            const pass = prompt("Введіть адмін-пароль:");
+            
+            if (pass !== ADMIN_PASSWORD) {
+                alert("Невірний пароль!");
+                return;
+            }
+
+            const duration = document.getElementById('duration').value;
+            const resultDiv = document.getElementById('result');
+            
+            // Генерація ключа
+            const rand = () => Math.random().toString(36).substring(2, 7).toUpperCase();
+            const newKey = `GOOSE-${rand()}-${rand()}`;
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('license_keys')
+                    .insert([{ 
+                        key: newKey, 
+                        type: duration, 
+                        is_used: false 
+                    }]);
+
+                if (error) throw error;
+
+                resultDiv.style.display = 'block';
+                resultDiv.innerText = "КЛЮЧ: " + newKey;
+                alert("Ключ успішно додано в базу!");
+
+            } catch (err) {
+                console.error(err);
+                alert("Помилка бази: " + err.message);
+            }
+        });
     </script>
-</body>
-</html>
+
 </body>
 </html>
