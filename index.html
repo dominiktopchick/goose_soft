@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Goose Soft Admin Panel</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { background: #050505; color: #00FF00; font-family: 'Courier New', monospace; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .panel { border: 2px solid #00FF00; padding: 30px; background: #0a0a0a; box-shadow: 0 0 20px #00FF00; text-align: center; width: 400px; }
+        h1 { font-size: 24px; margin-bottom: 20px; text-shadow: 0 0 10px #00FF00; }
+        select, button { width: 100%; padding: 10px; margin: 10px 0; background: black; color: #00FF00; border: 1px solid #00FF00; cursor: pointer; font-family: inherit; }
+        button:hover { background: #00FF00; color: black; font-weight: bold; }
+        #result { margin-top: 20px; padding: 10px; border: 1px dashed #00FFFF; color: #00FFFF; display: none; word-break: break-all; }
+    </style>
+</head>
+<body>
+    <div class="panel">
+        <h1>⚔ GOOSE KEYGEN ⚔</h1>
+        <label>Оберіть термін:</label>
+        <select id="duration">
+            <option value="1h">1 Година</option>
+            <option value="1d">1 День</option>
+            <option value="1m">1 Місяць</option>
+            <option value="lifetime">Назавжди (Lifetime)</option>
+        </select>
+        <button onclick="generateKey()">ЗГЕНЕРУВАТИ ЛІЦЕНЗІЮ</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'ТВІЙ_URL_ПРОЕКТУ';
+        const SUPABASE_KEY = 'ТВІЙ_ANON_KEY';
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        async function generateKey() {
+            const duration = document.getElementById('duration').value;
+            // Генеримо ключ формату GOOSE-XXXX-XXXX
+            const randomPart = () => Math.random().toString(36).substring(2, 6).toUpperCase();
+            const newKey = `GOOSE-${randomPart()}-${randomPart()}`;
+
+            const { data, error } = await supabase
+                .from('license_keys')
+                .insert([{ 
+                    key: newKey, 
+                    type: duration, 
+                    is_used: false 
+                }]);
+
+            const resultDiv = document.getElementById('result');
+            if (error) {
+                resultDiv.style.display = 'block';
+                resultDiv.style.color = 'red';
+                resultDiv.innerText = "Помилка: " + error.message;
+            } else {
+                resultDiv.style.display = 'block';
+                resultDiv.style.color = '#00FFFF';
+                resultDiv.innerText = "КЛЮЧ СТВОРЕНО: " + newKey;
+            }
+        }
+    </script>
+</body>
+</html>
