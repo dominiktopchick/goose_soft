@@ -25,25 +25,28 @@
             <option value="1h">1 Година</option>
             <option value="1d">1 День</option>
             <option value="30d">30 Днів</option>
-            <option value="lifetime">LIFETIME (Назавжди)</option>
+            <option value="lifetime">LIFETIME</option>
         </select>
 
         <button id="genBtn">ЗГЕНЕРУВАТИ КЛЮЧ</button>
 
         <div id="result"></div>
-        <div class="status">Connected to Supabase V2</div>
+        <div class="status">Table: license_keys_goose</div>
     </div>
 
     <script>
-        // --- ВСТАВ СВОЇ ДАНІ СЮДИ ---
-        const SUPABASE_URL = 'https://dxyiwfugfsclpufioeds.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR4eWl3ZnVnZnNjbHB1ZmlvZWRzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzNDE2NjgsImV4cCI6MjA4NjkxNzY2OH0.EYETRqZggLbB8N2zjcOnkydlx9F8QyAB-Zi8oKycMCI';
+        // =========================================================
+        // ВСТАВ СВОЇ ДАНІ НИЖЧЕ:
+        // =========================================================
+        
+        const SUPABASE_URL = 'https://dxyiwfugfsclpufioeds.supabase.co'; // <--- ВСТАВ СЮДИ URL
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR4eWl3ZnVnZnNjbHB1ZmlvZWRzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzNDE2NjgsImV4cCI6MjA4NjkxNzY2OH0.EYETRqZggLbB8N2zjcOnkydlx9F8QyAB-Zi8oKycMCI'; // <--- ВСТАВ СЮДИ КЛЮЧ
         const ADMIN_PASSWORD = '1234'; // Твій пароль для створення ключів
-        // ---------------------------
+        
+        // =========================================================
 
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // Використовуємо addEventListener замість onclick в HTML, щоб уникнути ReferenceError
         document.getElementById('genBtn').addEventListener('click', async () => {
             const pass = prompt("Введіть адмін-пароль:");
             
@@ -55,13 +58,12 @@
             const duration = document.getElementById('duration').value;
             const resultDiv = document.getElementById('result');
             
-            // Генерація ключа
             const rand = () => Math.random().toString(36).substring(2, 7).toUpperCase();
             const newKey = `GOOSE-${rand()}-${rand()}`;
 
             try {
                 const { data, error } = await supabaseClient
-                    .from('license_keys')
+                    .from('license_keys_goose') 
                     .insert([{ 
                         key: newKey, 
                         type: duration, 
@@ -80,6 +82,5 @@
             }
         });
     </script>
-
 </body>
 </html>
